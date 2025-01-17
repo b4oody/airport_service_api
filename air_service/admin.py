@@ -1,3 +1,18 @@
 from django.contrib import admin
 
-# Register your models here.
+from air_service.models import Country, City, Airport
+
+
+# class TicketInLine(admin.TabularInline):
+#     model = Ticket
+#     extra = 1
+#
+
+# @admin.register(Order)
+# class OrderAdmin(admin.ModelAdmin):
+#     inlines = (TicketInLine,)
+
+
+admin.site.register(Country)
+admin.site.register(City)
+admin.site.register(Airport)
