@@ -4,11 +4,13 @@ from air_service.models import (
     Country,
     City,
     Airport,
+    Airplane,
 )
 from air_service.serializers import (
     CountrySerializer,
     CitySerializer,
     AirportSerializer,
+    AirplaneSerializer,
 )
 
 
@@ -25,3 +27,8 @@ class CityViewSet(viewsets.ModelViewSet):
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportSerializer
+
+
+class AirplaneViewSet(viewsets.ModelViewSet):
+    queryset = Airplane.objects.all()
+    serializer_class = AirplaneSerializer

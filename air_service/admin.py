@@ -1,6 +1,13 @@
 from django.contrib import admin
 
-from air_service.models import Country, City, Airport
+from air_service.models import (
+    Country,
+    City,
+    Airport,
+    AirplaneType,
+    Airplane,
+
+)
 
 
 # class TicketInLine(admin.TabularInline):
@@ -16,3 +23,5 @@ from air_service.models import Country, City, Airport
 admin.site.register(Country)
 admin.site.register(City)
 admin.site.register(Airport)
+admin.site.register(AirplaneType)
+admin.site.register(Airplane)
