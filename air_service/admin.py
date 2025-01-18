@@ -6,6 +6,7 @@ from air_service.models import (
     Airport,
     AirplaneType,
     Airplane,
+    Route,
 
 )
 
@@ -25,3 +26,4 @@ admin.site.register(City)
 admin.site.register(Airport)
 admin.site.register(AirplaneType)
 admin.site.register(Airplane)
+admin.site.register(Route)

@@ -1,6 +1,12 @@
 from rest_framework import serializers
 
-from air_service.models import Country, City, Airport, Airplane
+from air_service.models import (
+    Country,
+    City,
+    Airport,
+    Airplane,
+    Route,
+)
 
 
 class CountrySerializer(serializers.ModelSerializer):
@@ -46,4 +52,25 @@ class AirplaneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Airplane
-        fields = ["id", "airplane_name", "rows", "seats_in_row", "airplane_type"]
+        fields = [
+            "id",
+            "airplane_name",
+            "rows",
+            "seats_in_row",
+            "airplane_type"
+        ]
+
+
+class RouteSerializer(serializers.ModelSerializer):
+    source = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field="airport_name"
+    )
+    destination = serializers.SlugRelatedField(
+        read_only=True,
+        slug_field="airport_name"
+    )
+
+    class Meta:
+        model = Route
+        fields = ["id", "source", "destination", "distance"]
