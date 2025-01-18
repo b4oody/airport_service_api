@@ -77,6 +77,12 @@ class Crew(models.Model):
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
+    def full_name(self):
+        return f"{self.first_name} {self.last_name}"
+
+    class Meta:
+        ordering = ["last_name", "first_name"]
+
 
 class Flight(models.Model):
     route = models.ForeignKey(
@@ -88,9 +94,8 @@ class Flight(models.Model):
         on_delete=models.CASCADE,
         related_name="flights"
     )
-    crew = models.ForeignKey(
+    crew = models.ManyToManyField(
         Crew,
-        on_delete=models.CASCADE,
         related_name="flights"
     )
     departure_datetime = models.DateTimeField()

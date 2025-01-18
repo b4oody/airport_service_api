@@ -5,7 +5,7 @@ from air_service.models import (
     City,
     Airport,
     Airplane,
-    Route,
+    Route, Crew, Flight,
 )
 
 
@@ -74,3 +74,26 @@ class RouteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Route
         fields = ["id", "source", "destination", "distance"]
+
+
+class CrewRetrieveSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Crew
+        fields = ["id", "full_name"]
+
+
+class FlightSerializer(serializers.ModelSerializer):
+    route = RouteSerializer()
+    airplane = AirplaneSerializer()
+    crew = CrewRetrieveSerializer(many=True)
+
+    class Meta:
+        model = Flight
+        fields = [
+            "id",
+            "route",
+            "airplane",
+            "crew",
+            "departure_datetime",
+            "arrival_datetime",
+        ]

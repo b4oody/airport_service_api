@@ -6,6 +6,8 @@ from air_service.models import (
     Airport,
     Airplane,
     Route,
+    Crew,
+    Flight
 )
 from air_service.serializers import (
     CountrySerializer,
@@ -13,6 +15,9 @@ from air_service.serializers import (
     AirportSerializer,
     AirplaneSerializer,
     RouteSerializer,
+    # CrewListSerializer,
+    FlightSerializer,
+    CrewRetrieveSerializer,
 )
 
 
@@ -39,3 +44,13 @@ class AirplaneViewSet(viewsets.ModelViewSet):
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all()
     serializer_class = RouteSerializer
+
+
+class CrewViewSet(viewsets.ModelViewSet):
+    queryset = Crew.objects.all()
+    serializer_class = CrewRetrieveSerializer
+
+
+class FlightViewSet(viewsets.ModelViewSet):
+    queryset = Flight.objects.all()
+    serializer_class = FlightSerializer
