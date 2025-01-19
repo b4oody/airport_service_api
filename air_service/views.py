@@ -14,7 +14,8 @@ from air_service.serializers import (
     CountrySerializer,
     CitySerializer,
     AirportSerializer,
-    AirplaneSerializer,
+    AirplaneListSerializer,
+    AirplaneRetrieveSerializer,
     RouteSerializer,
     # CrewListSerializer,
     FlightSerializer,
@@ -31,6 +32,12 @@ class CountryViewSet(viewsets.ModelViewSet):
 class CityViewSet(viewsets.ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+        if self.action == "list":
+            return queryset.select_related("country")
+        return queryset
 
 
 class AirportViewSet(viewsets.ModelViewSet):
@@ -60,6 +67,7 @@ class CrewViewSet(viewsets.ModelViewSet):
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
+
 
 
 class OrderViewSet(viewsets.ModelViewSet):
