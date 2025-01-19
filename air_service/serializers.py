@@ -5,7 +5,7 @@ from air_service.models import (
     City,
     Airport,
     Airplane,
-    Route, Crew, Flight,
+    Route, Crew, Flight, Ticket, Order,
 )
 
 
@@ -97,3 +97,29 @@ class FlightSerializer(serializers.ModelSerializer):
             "departure_datetime",
             "arrival_datetime",
         ]
+
+
+class TicketSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ticket
+        fields = ["id", "seat_row", "seat_number", "flight"]
+
+
+class FlightListSerializer(serializers.ModelSerializer):
+    route = serializers.CharField(source="route.full_route", read_only=True)
+
+    class Meta:
+        model = Flight
+        fields = ["id", "route", "departure_datetime", "arrival_datetime"]
+
+
+class TicketRetrieveSerializer(TicketSerializer):
+    flight = FlightListSerializer()
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    tickets = TicketRetrieveSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ["id", "order_created_at", "user", "tickets"]

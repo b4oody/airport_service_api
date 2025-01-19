@@ -69,6 +69,9 @@ class Route(models.Model):
     def __str__(self):
         return f"from {self.source.airport_name} to {self.destination.airport_name}"
 
+    def full_route(self):
+        return f"{self.source.airport_name} - {self.destination.airport_name}"
+
 
 class Crew(models.Model):
     first_name = models.CharField(max_length=100)
@@ -122,6 +125,11 @@ class Ticket(models.Model):
     seat_number = models.IntegerField()
     flight = models.ForeignKey(
         Flight,
+        on_delete=models.CASCADE,
+        related_name="tickets"
+    )
+    order = models.ForeignKey(
+        Order,
         on_delete=models.CASCADE,
         related_name="tickets"
     )

@@ -7,7 +7,8 @@ from air_service.models import (
     Airplane,
     Route,
     Crew,
-    Flight
+    Flight,
+    Order,
 )
 from air_service.serializers import (
     CountrySerializer,
@@ -18,6 +19,7 @@ from air_service.serializers import (
     # CrewListSerializer,
     FlightSerializer,
     CrewRetrieveSerializer,
+    OrderSerializer,
 )
 
 
@@ -54,3 +56,12 @@ class CrewViewSet(viewsets.ModelViewSet):
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all()
     serializer_class = FlightSerializer
+
+
+class OrderViewSet(viewsets.ModelViewSet):
+    queryset = Order.objects.all()
+    serializer_class = OrderSerializer
+
+    def get_queryset(self):
+        request = self.request
+        return Order.objects.filter(user=request.user)
