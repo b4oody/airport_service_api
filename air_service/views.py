@@ -20,6 +20,7 @@ from air_service.serializers import (
     RouteSerializer,
     # CrewListSerializer,
     FlightSerializer,
+    FlightListSerializer,
     CrewRetrieveSerializer,
     OrderSerializer,
 )
@@ -79,7 +80,6 @@ class CrewViewSet(viewsets.ModelViewSet):
 
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all()
-    serializer_class = FlightSerializer
 
     def get_queryset(self):
         queryset = self.queryset
@@ -90,6 +90,11 @@ class FlightViewSet(viewsets.ModelViewSet):
                 "airplane",
             ).prefetch_related("crew")
         return queryset
+
+    def get_serializer_class(self):
+        if self.action == "list":
+            return FlightListSerializer
+        return FlightSerializer
 
 
 class OrderViewSet(viewsets.ModelViewSet):
