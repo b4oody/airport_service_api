@@ -1,3 +1,4 @@
+from django.db.models import Prefetch
 from rest_framework import viewsets
 
 from air_service.models import (
@@ -8,7 +9,7 @@ from air_service.models import (
     Route,
     Crew,
     Flight,
-    Order,
+    Order, Ticket,
 )
 from air_service.serializers import (
     CountrySerializer,
@@ -96,5 +97,15 @@ class OrderViewSet(viewsets.ModelViewSet):
     serializer_class = OrderSerializer
 
     def get_queryset(self):
-        request = self.request
-        return Order.objects.filter(user=request.user)
+        queryset = Order.objects.filter(user=self.request.user)
+        if self.action in ("list", "retrieve"):
+            tickets_prefetch = Prefetch(
+                "tickets",
+                queryset=Ticket.objects.select_related(
+                    "flight__route__source",
+                    "flight__route__destination"
+                ),
+            )
+            return queryset.prefetch_related(tickets_prefetch)
+        return queryset
+
