@@ -52,6 +52,9 @@ class Airplane(models.Model):
                 f"(rows:{self.rows} "
                 f"seats_in_row:{self.seats_in_row})")
 
+    def total_seats(self):
+        return self.rows * self.seats_in_row
+
 
 class Route(models.Model):
     source = models.ForeignKey(
