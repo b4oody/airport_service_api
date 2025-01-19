@@ -5,7 +5,12 @@ from air_service.models import (
     City,
     Airport,
     Airplane,
-    Route, Crew, Flight, Ticket, Order,
+    AirplaneType,
+    Route,
+    Crew,
+    Flight,
+    Ticket,
+    Order,
 )
 
 
@@ -40,15 +45,23 @@ class AirportSerializer(serializers.ModelSerializer):
 
 class AirplaneTypeSerializer(serializers.ModelSerializer):
     class Meta:
+        model = AirplaneType
+        fields = ["id", "type_name"]
+
+
+class AirplaneListSerializer(serializers.ModelSerializer):
+    class Meta:
         model = Airplane
-        fields = ["id", "airplane_type"]
+        fields = [
+            "id",
+            "airplane_name",
+            "rows",
+            "seats_in_row",
+        ]
 
 
-class AirplaneSerializer(serializers.ModelSerializer):
-    airplane_type = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field="type_name"
-    )
+class AirplaneRetrieveSerializer(AirplaneListSerializer):
+    airplane_type = AirplaneTypeSerializer()
 
     class Meta:
         model = Airplane
@@ -57,7 +70,7 @@ class AirplaneSerializer(serializers.ModelSerializer):
             "airplane_name",
             "rows",
             "seats_in_row",
-            "airplane_type"
+            "airplane_type",
         ]
 
 
@@ -84,7 +97,7 @@ class CrewRetrieveSerializer(serializers.ModelSerializer):
 
 class FlightSerializer(serializers.ModelSerializer):
     route = RouteSerializer()
-    airplane = AirplaneSerializer()
+    airplane = AirplaneListSerializer()
     crew = CrewRetrieveSerializer(many=True)
 
     class Meta:
