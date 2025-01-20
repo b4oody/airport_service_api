@@ -48,7 +48,6 @@ class CitySerializer(serializers.ModelSerializer):
         return instance
 
 
-
 class AirportRetrieveSerializer(serializers.ModelSerializer):
     city = serializers.SlugRelatedField(
         read_only=True,
@@ -68,6 +67,14 @@ class AirplaneTypeSerializer(serializers.ModelSerializer):
     class Meta:
         model = AirplaneType
         fields = ["id", "type_name"]
+
+
+class AirplaneSerializer(serializers.ModelSerializer):
+    airplane_type = serializers.CharField()
+
+    class Meta:
+        model = Airplane
+        fields = ["id", "airplane_name", "rows", "seats_in_row", "airplane_type"]
 
 
 class AirplaneListSerializer(serializers.ModelSerializer):
@@ -101,14 +108,8 @@ class AirplaneRetrieveSerializer(AirplaneListSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
-    source = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field="airport_name"
-    )
-    destination = serializers.SlugRelatedField(
-        read_only=True,
-        slug_field="airport_name"
-    )
+    source = AirportRetrieveSerializer()
+    destination = AirportRetrieveSerializer()
 
     class Meta:
         model = Route
@@ -146,11 +147,22 @@ class TicketSerializer(serializers.ModelSerializer):
 
 class FlightListSerializer(serializers.ModelSerializer):
     route = serializers.CharField(source="route.full_route", read_only=True)
+    airplane = serializers.SlugRelatedField(
+        slug_field="airplane_name",
+        read_only=True
+    )
 
     # free_seats = serializers.IntegerField()
+
     class Meta:
         model = Flight
-        fields = ["id", "route", "departure_datetime", "arrival_datetime"]
+        fields = [
+            "id",
+            "route",
+            "departure_datetime",
+            "arrival_datetime",
+            "airplane"
+        ]
 
 
 class TicketRetrieveSerializer(TicketSerializer):

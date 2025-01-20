@@ -6,15 +6,17 @@ from air_service.models import (
     City,
     Airport,
     Airplane,
+    AirplaneType,
     Route,
     Crew,
     Flight,
-    Order, Ticket,
+    Order,
+    Ticket,
 )
 from air_service.serializers import (
     CountrySerializer,
     CitySerializer,
-    AirportSerializer,
+    AirportRetrieveSerializer,
     AirplaneListSerializer,
     AirplaneRetrieveSerializer,
     RouteSerializer,
@@ -23,6 +25,8 @@ from air_service.serializers import (
     FlightListSerializer,
     CrewRetrieveSerializer,
     OrderSerializer,
+    AirplaneSerializer,
+    AirplaneTypeSerializer,
 )
 
 
@@ -44,7 +48,7 @@ class CityViewSet(viewsets.ModelViewSet):
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
-    serializer_class = AirportSerializer
+    serializer_class = AirportRetrieveSerializer
 
     def get_queryset(self):
         queryset = self.queryset
@@ -53,13 +57,20 @@ class AirportViewSet(viewsets.ModelViewSet):
         return queryset
 
 
+class AirplaneTypeViewSet(viewsets.ModelViewSet):
+    queryset = AirplaneType.objects.all()
+    serializer_class = AirplaneTypeSerializer
+
+
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all()
 
     def get_serializer_class(self):
         if self.action == "list":
             return AirplaneListSerializer
-        return AirplaneRetrieveSerializer
+        elif self.action == "retrieve":
+            return AirplaneRetrieveSerializer
+        return AirplaneSerializer
 
 
 class RouteViewSet(viewsets.ModelViewSet):
@@ -113,4 +124,3 @@ class OrderViewSet(viewsets.ModelViewSet):
             )
             return queryset.prefetch_related(tickets_prefetch)
         return queryset
-
