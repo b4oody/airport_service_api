@@ -31,10 +31,18 @@ class Airport(models.Model):
 
 
 class AirplaneType(models.Model):
-    type_name = models.CharField(max_length=100, unique=True)
+    type_name = models.CharField(max_length=100)
 
     def __str__(self):
         return self.type_name
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["type_name"],
+                name="unique_type_name"
+            )
+        ]
 
 
 class Airplane(models.Model):
