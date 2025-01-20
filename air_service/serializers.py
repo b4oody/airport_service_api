@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from air_service.models import (
@@ -17,18 +18,38 @@ from air_service.models import (
 class CountrySerializer(serializers.ModelSerializer):
     class Meta:
         model = Country
-        fields = ["id", "country_name", ]
+        fields = ["id", "country_name"]
 
 
 class CitySerializer(serializers.ModelSerializer):
-    country = serializers.SlugRelatedField(slug_field="country_name", read_only=True)
+    country = serializers.CharField()
 
     class Meta:
         model = City
         fields = ["id", "city_name", "country"]
 
+    @transaction.atomic
+    def create(self, validated_data):
+        country_name = validated_data.pop("country")
+        country, _ = Country.objects.get_or_create(country_name=country_name)
+        city = City.objects.create(country=country, **validated_data)
+        return city
 
-class AirportSerializer(serializers.ModelSerializer):
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        country_name = validated_data.pop("country", None)
+        if country_name:
+            country, _ = Country.objects.get_or_create(
+                country_name=country_name
+            )
+            instance.country = country
+        instance.city_name = validated_data.get("city_name", instance.city_name)
+        instance.save()
+        return instance
+
+
+
+class AirportRetrieveSerializer(serializers.ModelSerializer):
     city = serializers.SlugRelatedField(
         read_only=True,
         slug_field="city_name",
