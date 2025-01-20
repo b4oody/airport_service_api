@@ -18,7 +18,7 @@ from debug_toolbar.toolbar import debug_toolbar_urls
 from django.contrib import admin
 from django.urls import path, include
 
-urlpatterns = [
+urlpatterns = ([
     path("admin/", admin.site.urls),
     path("api/v1/", include("air_service.urls", namespace="air_service")),
-] + debug_toolbar_urls()
+] + debug_toolbar_urls())
