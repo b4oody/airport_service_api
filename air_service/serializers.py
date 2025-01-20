@@ -76,6 +76,29 @@ class AirplaneSerializer(serializers.ModelSerializer):
         model = Airplane
         fields = ["id", "airplane_name", "rows", "seats_in_row", "airplane_type"]
 
+    @transaction.atomic
+    def create(self, validated_data):
+        airplane_type = validated_data.pop("airplane_type")
+        airplane_type, _ = AirplaneType.objects.get_or_create(
+            type_name=airplane_type
+        )
+        airplane = Airplane.objects.create(airplane_type=airplane_type, **validated_data)
+        return airplane
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        type_name = validated_data.pop("airplane_type", None)
+        if type_name:
+            airplane_type, _ = AirplaneType.objects.get_or_create(
+                type_name=type_name
+            )
+            instance.airplane_type = airplane_type
+        instance.airplane_name = validated_data.get("airplane_name", instance.airplane_name)
+        instance.rows = validated_data.get("rows", instance.rows)
+        instance.seats_in_row = validated_data.get("seats_in_row", instance.seats_in_row)
+        instance.save()
+        return instance
+
 
 class AirplaneListSerializer(serializers.ModelSerializer):
     airplane_type = serializers.SlugRelatedField(
