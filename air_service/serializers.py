@@ -1,3 +1,5 @@
+from typing import Union
+
 from django.db import transaction
 from rest_framework import serializers
 
@@ -131,12 +133,74 @@ class AirplaneRetrieveSerializer(AirplaneListSerializer):
 
 
 class RouteSerializer(serializers.ModelSerializer):
-    source = AirportRetrieveSerializer()
-    destination = AirportRetrieveSerializer()
+    source = serializers.CharField()
+    destination = serializers.CharField()
 
     class Meta:
         model = Route
         fields = ["id", "source", "destination", "distance"]
+
+    @staticmethod
+    def get_airport_by_id_or_name(
+            name_input: Union[str, int],
+            route_name: str
+    ) -> Route:
+        """
+        Get airport by ID or name.
+        :param name_input: ID or name of airport.
+        :param route_name: The name for name of route ("source" or "destination").
+        :return: Object of Airport.
+        """
+        if name_input.isdigit():
+            try:
+                route_name = Airport.objects.get(
+                    id=int(name_input)
+                )
+            except Airport.DoesNotExist:
+                raise serializers.ValidationError(
+                    {"destination": f"Invalid {route_name} airport ID."}
+                )
+        else:
+            airport = Airport.objects.filter(airport_name=name_input).first()
+            if not airport:
+                raise serializers.ValidationError(
+                    {
+                        route_name: f"{route_name.capitalize()} "
+                                    f"airport '{name_input}' does not exist. "
+                                    f"Please create it first."
+                    }
+                )
+            return airport
+
+    @transaction.atomic
+    def create(self, validated_data):
+        source_input = validated_data.pop("source")
+        destination_input = validated_data.pop("destination")
+
+        source_airport = self.get_airport_by_id_or_name(
+            source_input, "source"
+        )
+        destination_airport = self.get_airport_by_id_or_name(
+            destination_input, "destination"
+        )
+
+        if Route.objects.filter(
+                source=source_airport,
+                destination=destination_airport
+        ).exists():
+            raise serializers.ValidationError("This route already exists.")
+
+        route = Route.objects.create(
+            source=source_airport,
+            destination=destination_airport,
+            **validated_data
+        )
+        return route
+
+
+class RouteListRetrieveSerializer(RouteSerializer):
+    source = AirportRetrieveSerializer()
+    destination = AirportRetrieveSerializer()
 
 
 class CrewRetrieveSerializer(serializers.ModelSerializer):
