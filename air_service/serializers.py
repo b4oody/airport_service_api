@@ -141,35 +141,24 @@ class RouteSerializer(serializers.ModelSerializer):
         fields = ["id", "source", "destination", "distance"]
 
     @staticmethod
-    def get_airport_by_id_or_name(
-            name_input: Union[str, int],
-            route_name: str
-    ) -> Route:
-        """
-        Get airport by ID or name.
-        :param name_input: ID or name of airport.
-        :param route_name: The name for name of route ("source" or "destination").
-        :return: Object of Airport.
-        """
-        if name_input.isdigit():
+    def get_airport_by_id_or_name(name_input: Union[str, int], field_name: str) -> Airport:
+        if isinstance(name_input, int) or name_input.isdigit():
             try:
-                route_name = Airport.objects.get(
-                    id=int(name_input)
-                )
+                airport = Airport.objects.get(id=int(name_input))
+                return airport
             except Airport.DoesNotExist:
                 raise serializers.ValidationError(
-                    {"destination": f"Invalid {route_name} airport ID."}
+                    {field_name: f"Invalid {field_name} airport ID."}
                 )
         else:
             airport = Airport.objects.filter(airport_name=name_input).first()
             if not airport:
                 raise serializers.ValidationError(
                     {
-                        route_name: f"{route_name.capitalize()} "
-                                    f"airport '{name_input}' does not exist. "
-                                    f"Please create it first."
-                    }
+                        field_name: f"{field_name.capitalize()} airport '{name_input}' "
+                                    f"does not exist. Please create it first."}
                 )
+            print(f"Found airport for {field_name}: {airport}")
             return airport
 
     @transaction.atomic
@@ -196,6 +185,26 @@ class RouteSerializer(serializers.ModelSerializer):
             **validated_data
         )
         return route
+
+    @transaction.atomic
+    def update(self, instance, validated_data):
+        source_input = validated_data.pop("source", None)
+        destination_input = validated_data.pop("destination", None)
+
+        if source_input:
+            source_airport = self.get_airport_by_id_or_name(
+                source_input, "source"
+            )
+            instance.source = source_airport
+        if destination_input:
+            destination_airport = self.get_airport_by_id_or_name(
+                destination_input, "destination"
+            )
+            instance.destination = destination_airport
+
+        instance.distance = validated_data.get("distance", instance.distance)
+        instance.save()
+        return instance
 
 
 class RouteListRetrieveSerializer(RouteSerializer):
