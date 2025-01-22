@@ -27,7 +27,7 @@ from air_service.serializers import (
     CrewRetrieveSerializer,
     OrderSerializer,
     AirplaneSerializer,
-    AirplaneTypeSerializer,
+    AirplaneTypeSerializer, FlightRetrieveSerializer,
 )
 
 
@@ -110,6 +110,8 @@ class FlightViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.action == "list":
             return FlightListSerializer
+        elif self.action == "retrieve":
+            return FlightRetrieveSerializer
         return FlightSerializer
 
 
