@@ -21,13 +21,14 @@ from air_service.serializers import (
     AirplaneRetrieveSerializer,
     RouteSerializer,
     RouteListRetrieveSerializer,
-    # CrewListSerializer,
     FlightSerializer,
     FlightListSerializer,
     CrewRetrieveSerializer,
     OrderSerializer,
     AirplaneSerializer,
-    AirplaneTypeSerializer, FlightRetrieveSerializer,
+    AirplaneTypeSerializer,
+    FlightRetrieveSerializer,
+    OrderListRetrieveSerializer
 )
 
 
@@ -103,15 +104,15 @@ class FlightViewSet(viewsets.ModelViewSet):
             return (queryset.select_related(
                 "route__source",
                 "route__destination",
-                "airplane",)
-                    .prefetch_related("crew")
-                    .annotate(
+                "airplane", )
+            .prefetch_related("crew")
+            .annotate(
                 tickets_available=
                 F("airplane__rows") *
                 F("airplane__seats_in_row") -
                 Count("tickets")
             )
-                    )
+            )
         return queryset
 
     def get_serializer_class(self):
@@ -138,6 +139,11 @@ class OrderViewSet(viewsets.ModelViewSet):
             )
             return queryset.prefetch_related(tickets_prefetch)
         return queryset
+
+    def get_serializer_class(self):
+        if self.action in ("list", "retrieve"):
+            return OrderListRetrieveSerializer
+        return OrderSerializer
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
