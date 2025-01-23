@@ -78,6 +78,10 @@ class Route(models.Model):
     )
     distance = models.IntegerField()
 
+    class Meta:
+        unique_together = (("source", "destination"),)
+        ordering = ["source", "destination"]
+
     def __str__(self):
         return f"from {self.source.airport_name} to {self.destination.airport_name}"
 
