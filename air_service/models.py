@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.exceptions import ValidationError
 
 from config.settings.base import AUTH_USER_MODEL
 
@@ -151,3 +152,38 @@ class Ticket(models.Model):
             f"row:{self.seat_row})"
             f"seat:{self.seat_number}:"
             f"{self.flight.__str__()}")
+
+    class Meta:
+        unique_together = ["seat_number", "flight"]
+        ordering = ["seat_row"]
+
+    @staticmethod
+    def validate_seat(
+            seat: int,
+            num_seats: int,
+            row: int,
+            num_rows: int,
+            error_to_raise
+    ):
+        if not (1 <= seat <= num_seats):
+            raise error_to_raise({
+                "seat": f"seat must be in the range [1, {num_seats}]"
+            })
+
+        elif not (1 <= row <= num_rows):
+            raise error_to_raise({
+                "row": f"seat must be in the range [1, {num_rows}]"
+            })
+
+    def clean(self):
+        Ticket.validate_seat(
+            self.seat_number,
+            self.flight.airplane.total_seats,
+            self.seat_row,
+            self.flight.airplane.seats_in_row,
+            ValidationError
+        )
+
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)

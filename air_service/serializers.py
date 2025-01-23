@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Union
 
 from django.db import transaction
@@ -266,6 +265,17 @@ class TicketSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ticket
         fields = ["id", "seat_row", "seat_number", "flight"]
+
+    def validate(self, attrs):
+        data = super(TicketSerializer, self).validate(attrs)
+        Ticket.validate_seat(
+            attrs["seat_number"],
+            attrs["flight"].airplane.total_seats,
+            attrs["seat_row"],
+            attrs["flight"].airplane.seats_in_row,
+            serializers.ValidationError
+        )
+        return data
 
 
 class TicketRetrieveSerializer(TicketSerializer):
