@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Union
 
 from django.db import transaction
@@ -158,7 +159,6 @@ class RouteSerializer(serializers.ModelSerializer):
                         field_name: f"{field_name.capitalize()} airport '{name_input}' "
                                     f"does not exist. Please create it first."}
                 )
-            print(f"Found airport for {field_name}: {airport}")
             return airport
 
     @transaction.atomic
@@ -219,9 +219,6 @@ class CrewRetrieveSerializer(serializers.ModelSerializer):
 
 
 class FlightSerializer(serializers.ModelSerializer):
-    route = serializers.CharField(source="route.full_route")
-    airplane = serializers.CharField(source="airplane.airplane_name")
-
     class Meta:
         model = Flight
         fields = [
