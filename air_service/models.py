@@ -60,6 +60,7 @@ class Airplane(models.Model):
                 f"(rows:{self.rows} "
                 f"seats_in_row:{self.seats_in_row})")
 
+    @property
     def total_seats(self):
         return self.rows * self.seats_in_row
 
@@ -128,7 +129,7 @@ class Order(models.Model):
     )
 
     def __str__(self):
-        return f"{self.user}(self.created_at)"
+        return f"{self.user}({self.order_created_at})"
 
 
 class Ticket(models.Model):

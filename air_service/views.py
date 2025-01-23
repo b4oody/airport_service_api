@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Count, F
 from rest_framework import viewsets
 
 from air_service.models import (
@@ -100,11 +100,18 @@ class FlightViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = self.queryset
         if self.action in ("list", "retrieve"):
-            return queryset.select_related(
+            return (queryset.select_related(
                 "route__source",
                 "route__destination",
-                "airplane",
-            ).prefetch_related("crew")
+                "airplane",)
+                    .prefetch_related("crew")
+                    .annotate(
+                tickets_available=
+                F("airplane__rows") *
+                F("airplane__seats_in_row") -
+                Count("tickets")
+            )
+                    )
         return queryset
 
     def get_serializer_class(self):
@@ -131,3 +138,6 @@ class OrderViewSet(viewsets.ModelViewSet):
             )
             return queryset.prefetch_related(tickets_prefetch)
         return queryset
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

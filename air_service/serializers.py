@@ -243,8 +243,11 @@ class FlightListSerializer(serializers.ModelSerializer):
         slug_field="airplane_name",
         read_only=True
     )
-
-    # free_seats = serializers.IntegerField()
+    airplane_num_seats = serializers.IntegerField(
+        source="airplane.total_seats",
+        read_only=True
+    )
+    tickets_available = serializers.IntegerField(read_only=True)
 
     class Meta:
         model = Flight
@@ -253,7 +256,9 @@ class FlightListSerializer(serializers.ModelSerializer):
             "route",
             "departure_datetime",
             "arrival_datetime",
-            "airplane"
+            "airplane",
+            "airplane_num_seats",
+            "tickets_available",
         ]
 
 
@@ -272,4 +277,4 @@ class OrderSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Order
-        fields = ["id", "order_created_at", "user", "tickets"]
+        fields = ["id", "order_created_at", "tickets"]
