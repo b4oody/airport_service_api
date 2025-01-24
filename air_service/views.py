@@ -57,9 +57,19 @@ class AirportViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
+        city = self.request.query_params.get("city")
+        country = self.request.query_params.get("country")
+        if city:
+            queryset = queryset.filter(
+                city__city_name__icontains=city
+            )
+        if country:
+            queryset = queryset.filter(
+                city__country__country_name__icontains=country
+            )
         if self.action == "list":
             return queryset.select_related("city__country")
-        return queryset
+        return queryset.distinct()
 
 
 class AirplaneTypeViewSet(viewsets.ModelViewSet):
