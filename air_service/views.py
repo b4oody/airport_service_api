@@ -217,6 +217,21 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = Order.objects.filter(user=self.request.user)
+        order_created_at = self.request.query_params.get("order_created_at")
+        source = self.request.query_params.get("source")
+        destination = self.request.query_params.get("destination")
+        if order_created_at:
+            queryset = queryset.filter(
+                order_created_at__date=order_created_at
+            )
+        if source:
+            queryset = queryset.filter(
+                tickets__flight__route__source__airport_name__icontains=source
+            )
+        if destination:
+            queryset = queryset.filter(
+                tickets__flight__route__destination__airport_name__icontains=destination
+            )
         if self.action in ("list", "retrieve"):
             tickets_prefetch = Prefetch(
                 "tickets",
