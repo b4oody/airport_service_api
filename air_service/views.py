@@ -168,13 +168,33 @@ class FlightViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
+        source = self.request.query_params.get("source")
+        destination = self.request.query_params.get("destination")
+        departure_datetime = self.request.query_params.get("departure_datetime")
+        arrival_datetime = self.request.query_params.get("arrival_datetime")
+        if source:
+            queryset = queryset.filter(
+                route__source__airport_name__icontains=source
+            )
+        if destination:
+            queryset = queryset.filter(
+                route__destination__airport_name__icontains=destination
+            )
+        if departure_datetime:
+            queryset = queryset.filter(
+                departure_datetime__date=departure_datetime
+            )
+        if arrival_datetime:
+            queryset = queryset.filter(
+                arrival_datetime__date=arrival_datetime
+            )
+
         if self.action in ("list", "retrieve"):
             return (queryset.select_related(
                 "route__source",
                 "route__destination",
-                "airplane", )
-            .prefetch_related("crew")
-            .annotate(
+                "airplane",
+            ).prefetch_related("crew").annotate(
                 tickets_available=
                 F("airplane__rows") *
                 F("airplane__seats_in_row") -
