@@ -43,8 +43,11 @@ class CityViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
-        if self.action == "list":
-            return queryset.select_related("country")
+        country = self.request.query_params.get("country")
+        if country:
+            queryset = queryset.filter(
+                country__country_name__icontains=country
+            )
         return queryset
 
 
