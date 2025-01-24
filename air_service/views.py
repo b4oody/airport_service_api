@@ -80,6 +80,20 @@ class AirplaneTypeViewSet(viewsets.ModelViewSet):
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all()
 
+    def get_queryset(self):
+        queryset = self.queryset
+        airplane_name = self.request.query_params.get("airplane_name")
+        airplane_type = self.request.query_params.get("airplane_type")
+        if airplane_name:
+            queryset = queryset.filter(
+                airplane_name__icontains=airplane_name
+            )
+        if airplane_type:
+            queryset = queryset.filter(
+                airplane_type__type_name__icontains=airplane_type
+            )
+        return queryset
+
     def get_serializer_class(self):
         if self.action == "list":
             return AirplaneListSerializer
