@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "air_service",
     "user",
     "debug_toolbar",
+    "django_filters",
 
 ]
 

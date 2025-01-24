@@ -1,5 +1,5 @@
 from django.db.models import Prefetch, Count, F, Min, Max
-from rest_framework import viewsets
+from rest_framework import viewsets, filters
 
 from air_service.models import (
     Country,
@@ -35,11 +35,15 @@ from air_service.serializers import (
 class CountryViewSet(viewsets.ModelViewSet):
     queryset = Country.objects.all()
     serializer_class = CountrySerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["country_name"]
 
 
 class CityViewSet(viewsets.ModelViewSet):
     queryset = City.objects.all()
     serializer_class = CitySerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["city_name", "country__country_name"]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -54,6 +58,8 @@ class CityViewSet(viewsets.ModelViewSet):
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
     serializer_class = AirportRetrieveSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["airport_name", "city__city_name"]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -75,10 +81,14 @@ class AirportViewSet(viewsets.ModelViewSet):
 class AirplaneTypeViewSet(viewsets.ModelViewSet):
     queryset = AirplaneType.objects.all()
     serializer_class = AirplaneTypeSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["type_name"]
 
 
 class AirplaneViewSet(viewsets.ModelViewSet):
     queryset = Airplane.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["airplane_name", "airplane_type__type_name"]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -104,6 +114,11 @@ class AirplaneViewSet(viewsets.ModelViewSet):
 
 class RouteViewSet(viewsets.ModelViewSet):
     queryset = Route.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        "source__airport_name",
+        "destination__airport_name",
+    ]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -147,6 +162,8 @@ class RouteViewSet(viewsets.ModelViewSet):
 class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
     serializer_class = CrewRetrieveSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ["first_name", "last_name"]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -165,6 +182,13 @@ class CrewViewSet(viewsets.ModelViewSet):
 
 class FlightViewSet(viewsets.ModelViewSet):
     queryset = Flight.objects.all()
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        "route__source__airport_name",
+        "route__destination__airport_name",
+        "departure_datetime",
+        "arrival_datetime",
+    ]
 
     def get_queryset(self):
         queryset = self.queryset
@@ -214,6 +238,12 @@ class FlightViewSet(viewsets.ModelViewSet):
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
     serializer_class = OrderSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = [
+        "order_created_at",
+        "tickets__flight__route__source__airport_name",
+        "tickets__flight__route__destination__airport_name"
+    ]
 
     def get_queryset(self):
         queryset = Order.objects.filter(user=self.request.user)
