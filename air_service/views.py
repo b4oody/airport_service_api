@@ -1,4 +1,4 @@
-from django.db.models import Prefetch, Count, F
+from django.db.models import Prefetch, Count, F, Min, Max
 from rest_framework import viewsets
 
 from air_service.models import (
@@ -107,6 +107,33 @@ class RouteViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         queryset = self.queryset
+        source = self.request.query_params.get("source")
+        destination = self.request.query_params.get("destination")
+        min_max = queryset.aggregate(
+            min=Min("distance"),
+            max=Max("distance")
+        )
+        distance_min = self.request.query_params.get(
+            "distance_min",
+            min_max["min"]
+        )
+        distance_max = self.request.query_params.get(
+            "distance_max",
+            min_max["max"]
+        )
+        if source:
+            queryset = queryset.filter(
+                source__airport_name__icontains=source
+            )
+        if destination:
+            queryset = queryset.filter(
+                destination__airport_name__icontains=destination
+            )
+        if distance_min or distance_max:
+            queryset = queryset.filter(
+                distance__gte=distance_min,
+                distance__lte=distance_max
+            )
         if self.action in ("list", "retrieve"):
             return queryset.select_related("source", "destination")
         return queryset
