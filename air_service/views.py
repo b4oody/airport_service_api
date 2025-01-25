@@ -102,7 +102,8 @@ class AirplaneViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(
                 airplane_type__type_name__icontains=airplane_type
             )
-        return queryset
+        if self.action == "list":
+            return queryset.select_related("airplane_type")
 
     def get_serializer_class(self):
         if self.action == "list":
@@ -124,10 +125,13 @@ class RouteViewSet(viewsets.ModelViewSet):
         queryset = self.queryset
         source = self.request.query_params.get("source")
         destination = self.request.query_params.get("destination")
-        min_max = queryset.aggregate(
-            min=Min("distance"),
-            max=Max("distance")
-        )
+        if not hasattr(self, "_min_max"):
+            self._min_max = queryset.aggregate(
+                min=Min("distance"),
+                max=Max("distance")
+            )
+        min_max = self._min_max
+
         distance_min = self.request.query_params.get(
             "distance_min",
             min_max["min"]
@@ -150,7 +154,10 @@ class RouteViewSet(viewsets.ModelViewSet):
                 distance__lte=distance_max
             )
         if self.action in ("list", "retrieve"):
-            return queryset.select_related("source", "destination")
+            return queryset.select_related(
+                "source__city__country",
+                "destination__city__country",
+            )
         return queryset
 
     def get_serializer_class(self):
@@ -181,11 +188,15 @@ class CrewViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects.all()
+    queryset = Flight.objects.select_related(
+        "route__source__city__country",
+        "route__destination__city__country",
+        "airplane__airplane_type",
+    ).prefetch_related("crew")
     filter_backends = [filters.SearchFilter]
     search_fields = [
-        "route__source__airport_name",
-        "route__destination__airport_name",
+        "route__source",
+        "route__destination",
         "departure_datetime",
         "arrival_datetime",
     ]
@@ -214,11 +225,7 @@ class FlightViewSet(viewsets.ModelViewSet):
             )
 
         if self.action in ("list", "retrieve"):
-            return (queryset.select_related(
-                "route__source",
-                "route__destination",
-                "airplane",
-            ).prefetch_related("crew").annotate(
+            return (queryset.annotate(
                 tickets_available=
                 F("airplane__rows") *
                 F("airplane__seats_in_row") -
@@ -267,7 +274,8 @@ class OrderViewSet(viewsets.ModelViewSet):
                 "tickets",
                 queryset=Ticket.objects.select_related(
                     "flight__route__source",
-                    "flight__route__destination"
+                    "flight__route__destination",
+                    "flight__airplane",
                 ),
             )
             return queryset.prefetch_related(tickets_prefetch)
