@@ -237,11 +237,9 @@ class FlightRetrieveSerializer(FlightSerializer):
 
 
 class FlightListSerializer(serializers.ModelSerializer):
-    route = serializers.CharField(source="route.full_route", read_only=True)
+    route = serializers.CharField(source="route.__str__", read_only=True, )
     airplane = serializers.SlugRelatedField(
-        slug_field="airplane_name",
-        read_only=True
-    )
+        slug_field="airplane_name", read_only=True, )
     airplane_num_seats = serializers.IntegerField(
         source="airplane.total_seats",
         read_only=True

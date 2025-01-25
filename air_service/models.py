@@ -1,3 +1,5 @@
+from django.utils.functional import cached_property
+
 from django.db import models
 from rest_framework.exceptions import ValidationError
 
@@ -84,9 +86,6 @@ class Route(models.Model):
         ordering = ["source", "destination"]
 
     def __str__(self):
-        return f"from {self.source.airport_name} to {self.destination.airport_name}"
-
-    def full_route(self):
         return f"{self.source.airport_name} - {self.destination.airport_name}"
 
 
