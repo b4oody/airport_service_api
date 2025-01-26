@@ -129,6 +129,9 @@ INTERNAL_IPS = [
     "127.0.0.1",
 ]
 REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "air_service.permissions.IsAdminAllOrIsAuthenticatedReadOnly",
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "rest_framework.authentication.TokenAuthentication",
     ],
