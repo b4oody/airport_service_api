@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     "django_filters",
     "rest_framework.authtoken",
+    "drf_spectacular",
 
 ]
 
@@ -139,7 +140,28 @@ REST_FRAMEWORK = {
         "rest_framework.throttling.AnonRateThrottle",
         "rest_framework.throttling.UserRateThrottle",
     ],
+    "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
     "DEFAULT_THROTTLE_RATES": {"anon": "100/day", "user": "1000/day"},
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 15
+}
+
+SPECTACULAR_SETTINGS = {
+    "TITLE": "Airport Service API",
+    "DESCRIPTION":
+        "Airport Service API is a project built on Django "
+        "REST Framework (DRF) that provides convenient "
+        "and structured access to data related to airport "
+        "management, flights, and passenger services. The "
+        "project is designed for developers who need to "
+        "integrate aviation services into their "
+        "applications or systems.",
+    "VERSION": "1.0.0",
+    "SERVE_INCLUDE_SCHEMA": False,
+    "SWAGGER_UI_SETTINGS": {
+        "deepLinking": True,
+        "defaultModelRendering": "model",
+        "defaultModelsExpandDepth": 2,
+        "defaultModelExpandDepth": 2,
+    },
 }
