@@ -52,6 +52,8 @@ class CityViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(
                 country__country_name__icontains=country
             )
+        if self.action == "list":
+            return queryset.select_related("country")
         return queryset
 
 
@@ -188,15 +190,11 @@ class CrewViewSet(viewsets.ModelViewSet):
 
 
 class FlightViewSet(viewsets.ModelViewSet):
-    queryset = Flight.objects.select_related(
-        "route__source__city__country",
-        "route__destination__city__country",
-        "airplane__airplane_type",
-    ).prefetch_related("crew")
+    queryset = Flight.objects.all()
     filter_backends = [filters.SearchFilter]
     search_fields = [
-        "route__source",
-        "route__destination",
+        "route__source__airport_name",
+        "route__destination__airport_name",
         "departure_datetime",
         "arrival_datetime",
     ]
@@ -225,7 +223,11 @@ class FlightViewSet(viewsets.ModelViewSet):
             )
 
         if self.action in ("list", "retrieve"):
-            return (queryset.annotate(
+            return (queryset.select_related(
+                "route__source",
+                "route__destination",
+                "airplane",
+            ).prefetch_related("crew").annotate(
                 tickets_available=
                 F("airplane__rows") *
                 F("airplane__seats_in_row") -
@@ -274,8 +276,7 @@ class OrderViewSet(viewsets.ModelViewSet):
                 "tickets",
                 queryset=Ticket.objects.select_related(
                     "flight__route__source",
-                    "flight__route__destination",
-                    "flight__airplane",
+                    "flight__route__destination"
                 ),
             )
             return queryset.prefetch_related(tickets_prefetch)

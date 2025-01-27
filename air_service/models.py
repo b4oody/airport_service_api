@@ -68,6 +68,11 @@ class Airplane(models.Model):
         return self.rows * self.seats_in_row
 
 
+class RouteManager(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().select_related("source", "destination")
+
+
 class Route(models.Model):
     source = models.ForeignKey(
         Airport,
@@ -80,6 +85,7 @@ class Route(models.Model):
         related_name="routes_to"
     )
     distance = models.IntegerField()
+    objects = RouteManager()
 
     class Meta:
         unique_together = (("source", "destination"),)
