@@ -36,6 +36,7 @@ INSTALLED_APPS = [
     "user",
     "debug_toolbar",
     "django_filters",
+    "rest_framework.authtoken",
 
 ]
 
@@ -83,7 +84,6 @@ DATABASES = {
     }
 }
 
-
 # Password validation
 # https://docs.djangoproject.com/en/5.1/ref/settings/#auth-password-validators
 
@@ -128,3 +128,18 @@ AUTH_USER_MODEL = "user.User"
 INTERNAL_IPS = [
     "127.0.0.1",
 ]
+REST_FRAMEWORK = {
+    "DEFAULT_PERMISSION_CLASSES": [
+        "air_service.permissions.IsAdminAllOrIsAuthenticatedReadOnly",
+    ],
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.TokenAuthentication",
+    ],
+    "DEFAULT_THROTTLE_CLASSES": [
+        "rest_framework.throttling.AnonRateThrottle",
+        "rest_framework.throttling.UserRateThrottle",
+    ],
+    "DEFAULT_THROTTLE_RATES": {"anon": "100/day", "user": "1000/day"},
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "PAGE_SIZE": 15
+}
