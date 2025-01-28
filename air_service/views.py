@@ -1,4 +1,5 @@
 from django.db.models import Prefetch, Count, F, Min, Max
+from drf_spectacular.utils import extend_schema, OpenApiParameter
 from rest_framework import viewsets, filters
 
 from air_service.models import (
@@ -56,6 +57,18 @@ class CityViewSet(viewsets.ModelViewSet):
             return queryset.select_related("country")
         return queryset
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "country",
+                type={"type": "string"},
+                description="Filter by country name"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class AirportViewSet(viewsets.ModelViewSet):
     queryset = Airport.objects.all()
@@ -78,6 +91,23 @@ class AirportViewSet(viewsets.ModelViewSet):
         if self.action == "list":
             return queryset.select_related("city__country")
         return queryset.distinct()
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "city",
+                type={"type": "string"},
+                description="Filter by city name"
+            ),
+            OpenApiParameter(
+                "country",
+                type={"type": "string"},
+                description="Filter by country name"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class AirplaneTypeViewSet(viewsets.ModelViewSet):
@@ -113,6 +143,23 @@ class AirplaneViewSet(viewsets.ModelViewSet):
         elif self.action == "retrieve":
             return AirplaneRetrieveSerializer
         return AirplaneSerializer
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "airplane name",
+                type={"type": "string"},
+                description="Filter by airplane name"
+            ),
+            OpenApiParameter(
+                "airplane type",
+                type={"type": "string"},
+                description="Filter by airplane type"
+            )
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class RouteViewSet(viewsets.ModelViewSet):
@@ -167,6 +214,35 @@ class RouteViewSet(viewsets.ModelViewSet):
             return RouteListRetrieveSerializer
         return RouteSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "min distance",
+                type={"type": "integer"},
+                description="Filter by min distance",
+                default=0
+            ),
+            OpenApiParameter(
+                "max distance",
+                type={"type": "integer"},
+                description="Filter by max distance",
+                default=10000
+            ),
+            OpenApiParameter(
+                "source",
+                type={"type": "string"},
+                description="Filter by by airport source"
+            ),
+            OpenApiParameter(
+                "destination",
+                type={"type": "string"},
+                description="Filter by airport destination"
+            ),
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class CrewViewSet(viewsets.ModelViewSet):
     queryset = Crew.objects.all()
@@ -187,6 +263,24 @@ class CrewViewSet(viewsets.ModelViewSet):
                 last_name__icontains=last_name
             )
         return queryset
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "first name",
+                type={"type": "string"},
+                description="Filter by first name",
+            ),
+            OpenApiParameter(
+                "last name",
+                type={"type": "string"},
+                description="Filter by last name",
+            ),
+
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
 
 
 class FlightViewSet(viewsets.ModelViewSet):
