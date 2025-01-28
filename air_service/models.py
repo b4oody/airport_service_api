@@ -1,5 +1,3 @@
-from django.utils.functional import cached_property
-
 from django.db import models
 from rest_framework.exceptions import ValidationError
 
@@ -127,7 +125,8 @@ class Flight(models.Model):
     arrival_datetime = models.DateTimeField()
 
     def __str__(self):
-        return f"{self.route.__str__()}({self.departure_datetime}-{self.arrival_datetime})"
+        return (f"{self.route.__str__()}"
+                f"({self.departure_datetime}-{self.arrival_datetime})")
 
 
 class Order(models.Model):

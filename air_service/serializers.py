@@ -45,7 +45,10 @@ class CitySerializer(serializers.ModelSerializer):
                 country_name=country_name
             )
             instance.country = country
-        instance.city_name = validated_data.get("city_name", instance.city_name)
+        instance.city_name = validated_data.get(
+            "city_name",
+            instance.city_name
+        )
         instance.save()
         return instance
 
@@ -76,7 +79,13 @@ class AirplaneSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Airplane
-        fields = ["id", "airplane_name", "rows", "seats_in_row", "airplane_type"]
+        fields = [
+            "id",
+            "airplane_name",
+            "rows",
+            "seats_in_row",
+            "airplane_type"
+        ]
 
     @transaction.atomic
     def create(self, validated_data):
@@ -84,7 +93,10 @@ class AirplaneSerializer(serializers.ModelSerializer):
         airplane_type, _ = AirplaneType.objects.get_or_create(
             type_name=airplane_type
         )
-        airplane = Airplane.objects.create(airplane_type=airplane_type, **validated_data)
+        airplane = Airplane.objects.create(
+            airplane_type=airplane_type,
+            **validated_data
+        )
         return airplane
 
     @transaction.atomic
@@ -95,9 +107,14 @@ class AirplaneSerializer(serializers.ModelSerializer):
                 type_name=type_name
             )
             instance.airplane_type = airplane_type
-        instance.airplane_name = validated_data.get("airplane_name", instance.airplane_name)
+        instance.airplane_name = validated_data.get(
+            "airplane_name",
+            instance.airplane_name
+        )
         instance.rows = validated_data.get("rows", instance.rows)
-        instance.seats_in_row = validated_data.get("seats_in_row", instance.seats_in_row)
+        instance.seats_in_row = validated_data.get(
+            "seats_in_row",
+            instance.seats_in_row)
         instance.save()
         return instance
 
@@ -141,7 +158,10 @@ class RouteSerializer(serializers.ModelSerializer):
         fields = ["id", "source", "destination", "distance"]
 
     @staticmethod
-    def get_airport_by_id_or_name(name_input: Union[str, int], field_name: str) -> Airport:
+    def get_airport_by_id_or_name(
+            name_input: Union[str, int],
+            field_name: str
+    ) -> Airport:
         if isinstance(name_input, int) or name_input.isdigit():
             try:
                 airport = Airport.objects.get(id=int(name_input))
@@ -155,8 +175,10 @@ class RouteSerializer(serializers.ModelSerializer):
             if not airport:
                 raise serializers.ValidationError(
                     {
-                        field_name: f"{field_name.capitalize()} airport '{name_input}' "
-                                    f"does not exist. Please create it first."}
+                        field_name: f"{field_name.capitalize()} "
+                                    f"airport '{name_input}' "
+                                    f"does not exist. "
+                                    f"Please create it first."}
                 )
             return airport
 
