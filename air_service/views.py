@@ -400,8 +400,8 @@ class OrderViewSet(viewsets.ModelViewSet):
             tickets_prefetch = Prefetch(
                 "tickets",
                 queryset=Ticket.objects.select_related(
-                    "flight__route__source",
-                    "flight__route__destination"
+                    "flight__route__source__city",
+                    "flight__route__destination__city",
                 ),
             )
             return queryset.prefetch_related(tickets_prefetch)
