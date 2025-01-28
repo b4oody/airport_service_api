@@ -337,6 +337,36 @@ class FlightViewSet(viewsets.ModelViewSet):
             return FlightRetrieveSerializer
         return FlightSerializer
 
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type={"type": "string"},
+                description="Filter by by airport source"
+            ),
+            OpenApiParameter(
+                "destination",
+                type={"type": "string"},
+                description="Filter by airport destination"
+            ),
+            OpenApiParameter(
+                "departure_datetime",
+                type={"type": "datetime"},
+                description="Filter by departure datetime",
+                default="2003-10-10"
+            ),
+            OpenApiParameter(
+                "arrival_datetime",
+                type={"type": "datetime"},
+                description="Filter by arrival datetime",
+                default="2023-10-10"
+            ),
+
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
+
 
 class OrderViewSet(viewsets.ModelViewSet):
     queryset = Order.objects.all()
@@ -383,3 +413,28 @@ class OrderViewSet(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         serializer.save(user=self.request.user)
+
+    @extend_schema(
+        parameters=[
+            OpenApiParameter(
+                "source",
+                type={"type": "string"},
+                description="Filter by by airport source"
+            ),
+            OpenApiParameter(
+                "destination",
+                type={"type": "string"},
+                description="Filter by airport destination"
+            ),
+            OpenApiParameter(
+                "order_created_at",
+                type={"type": "datetime"},
+                description="Filter by created at",
+                default="2003-10-10"
+            ),
+
+
+        ]
+    )
+    def list(self, request, *args, **kwargs):
+        return super().list(request, *args, **kwargs)
