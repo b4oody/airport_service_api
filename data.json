@@ -1,0 +1,386 @@
+[
+  {
+    "model": "user.user",
+    "pk": 1,
+    "fields": {
+      "username": "user1",
+      "email": "user1@example.com",
+      "password": "pbkdf2_sha256$260000$h4..."
+    }
+  },
+  {
+    "model": "user.user",
+    "pk": 2,
+    "fields": {
+      "username": "user2",
+      "email": "user2@example.com",
+      "password": "pbkdf2_sha256$260000$h4..."
+    }
+  },
+  {
+    "model": "air_service.country",
+    "pk": 1,
+    "fields": {
+      "country_name": "United States"
+    }
+  },
+  {
+    "model": "air_service.country",
+    "pk": 2,
+    "fields": {
+      "country_name": "Canada"
+    }
+  },
+  {
+    "model": "air_service.country",
+    "pk": 3,
+    "fields": {
+      "country_name": "Mexico"
+    }
+  },
+  {
+    "model": "air_service.country",
+    "pk": 4,
+    "fields": {
+      "country_name": "United Kingdom"
+    }
+  },
+  {
+    "model": "air_service.country",
+    "pk": 5,
+    "fields": {
+      "country_name": "France"
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 1,
+    "fields": {
+      "city_name": "New York",
+      "country": 1
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 2,
+    "fields": {
+      "city_name": "Los Angeles",
+      "country": 1
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 3,
+    "fields": {
+      "city_name": "Toronto",
+      "country": 2
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 4,
+    "fields": {
+      "city_name": "London",
+      "country": 4
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 5,
+    "fields": {
+      "city_name": "Paris",
+      "country": 5
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 6,
+    "fields": {
+      "city_name": "Chicago",
+      "country": 1
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 7,
+    "fields": {
+      "city_name": "Vancouver",
+      "country": 2
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 8,
+    "fields": {
+      "city_name": "Mexico City",
+      "country": 3
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 9,
+    "fields": {
+      "city_name": "Manchester",
+      "country": 4
+    }
+  },
+  {
+    "model": "air_service.city",
+    "pk": 10,
+    "fields": {
+      "city_name": "Nice",
+      "country": 5
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 1,
+    "fields": {
+      "airport_name": "JFK International Airport",
+      "city": 1
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 2,
+    "fields": {
+      "airport_name": "LAX International Airport",
+      "city": 2
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 3,
+    "fields": {
+      "airport_name": "Toronto Pearson Airport",
+      "city": 3
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 4,
+    "fields": {
+      "airport_name": "Heathrow Airport",
+      "city": 4
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 5,
+    "fields": {
+      "airport_name": "Charles de Gaulle Airport",
+      "city": 5
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 6,
+    "fields": {
+      "airport_name": "O'Hare International Airport",
+      "city": 6
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 7,
+    "fields": {
+      "airport_name": "Vancouver International Airport",
+      "city": 7
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 8,
+    "fields": {
+      "airport_name": "Mexico City International Airport",
+      "city": 8
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 9,
+    "fields": {
+      "airport_name": "Manchester Airport",
+      "city": 9
+    }
+  },
+  {
+    "model": "air_service.airport",
+    "pk": 10,
+    "fields": {
+      "airport_name": "Nice Cote d'Azur Airport",
+      "city": 10
+    }
+  },
+  {
+    "model": "air_service.airplanetype",
+    "pk": 1,
+    "fields": {
+      "type_name": "Boeing 737"
+    }
+  },
+  {
+    "model": "air_service.airplanetype",
+    "pk": 2,
+    "fields": {
+      "type_name": "Airbus A320"
+    }
+  },
+  {
+    "model": "air_service.airplane",
+    "pk": 1,
+    "fields": {
+      "airplane_name": "Boeing 737 Max",
+      "rows": 30,
+      "seats_in_row": 6,
+      "airplane_type": 1
+    }
+  },
+  {
+    "model": "air_service.airplane",
+    "pk": 2,
+    "fields": {
+      "airplane_name": "Airbus A320 Neo",
+      "rows": 28,
+      "seats_in_row": 6,
+      "airplane_type": 2
+    }
+  },
+  {
+    "model": "air_service.route",
+    "pk": 1,
+    "fields": {
+      "source": 1,
+      "destination": 2,
+      "distance": 500
+    }
+  },
+  {
+    "model": "air_service.route",
+    "pk": 2,
+    "fields": {
+      "source": 3,
+      "destination": 4,
+      "distance": 750
+    }
+  },
+  {
+    "model": "air_service.route",
+    "pk": 3,
+    "fields": {
+      "source": 5,
+      "destination": 6,
+      "distance": 300
+    }
+  },
+  {
+    "model": "air_service.route",
+    "pk": 4,
+    "fields": {
+      "source": 7,
+      "destination": 8,
+      "distance": 900
+    }
+  },
+  {
+    "model": "air_service.route",
+    "pk": 5,
+    "fields": {
+      "source": 9,
+      "destination": 10,
+      "distance": 700
+    }
+  },
+  {
+    "model": "air_service.crew",
+    "pk": 1,
+    "fields": {
+      "first_name": "John",
+      "last_name": "Doe"
+    }
+  },
+  {
+    "model": "air_service.crew",
+    "pk": 2,
+    "fields": {
+      "first_name": "Jane",
+      "last_name": "Smith"
+    }
+  },
+  {
+    "model": "air_service.flight",
+    "pk": 1,
+    "fields": {
+      "route": 1,
+      "airplane": 1,
+      "departure_datetime": "2025-02-01T10:00:00Z",
+      "arrival_datetime": "2025-02-01T12:00:00Z"
+    }
+  },
+  {
+    "model": "air_service.flight",
+    "pk": 2,
+    "fields": {
+      "route": 2,
+      "airplane": 2,
+      "departure_datetime": "2025-02-02T15:00:00Z",
+      "arrival_datetime": "2025-02-02T17:00:00Z"
+    }
+  },
+  {
+    "model": "air_service.order",
+    "pk": 1,
+    "fields": {
+      "order_created_at": "2025-01-01T10:00:00Z",
+      "user": 1
+    }
+  },
+  {
+    "model": "air_service.order",
+    "pk": 2,
+    "fields": {
+      "order_created_at": "2025-01-02T11:00:00Z",
+      "user": 2
+    }
+  },
+  {
+    "model": "air_service.ticket",
+    "pk": 1,
+    "fields": {
+      "seat_row": 1,
+      "seat_number": 1,
+      "flight": 1,
+      "order": 1
+    }
+  },
+  {
+    "model": "air_service.ticket",
+    "pk": 2,
+    "fields": {
+      "seat_row": 2,
+      "seat_number": 3,
+      "flight": 2,
+      "order": 1
+    }
+  },
+  {
+    "model": "air_service.ticket",
+    "pk": 3,
+    "fields": {
+      "seat_row": 1,
+      "seat_number": 2,
+      "flight": 1,
+      "order": 2
+    }
+  },
+  {
+    "model": "air_service.ticket",
+    "pk": 4,
+    "fields": {
+      "seat_row": 2,
+      "seat_number": 4,
+      "flight": 2,
+      "order": 2
+    }
+  }
+]
